@@ -38,7 +38,7 @@ button{font:inherit;font-size:14px;border:0;border-radius:10px;padding:10px 14px
 .pd-list button{width:100%;text-align:left;background:#fff;border:1px solid var(--line);font-weight:500;font-size:13px;padding:8px 10px;display:flex;gap:8px;align-items:baseline}
 .pd-list .d{font-size:11px;color:var(--muted);white-space:nowrap}
 .pd-list .h{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.form-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 10px}.form-grid .field{margin-bottom:0}#nightsHint{margin:6px 0 12px}#nightsHint.err,.hint.err{color:#a04435}.hint.ok{color:#32704e}
 .tag-options{display:flex;flex-wrap:wrap;gap:7px}.tag-choice{display:inline-flex;align-items:center;gap:5px;background:#f2f4ef;border:1px solid var(--line);padding:7px 9px;border-radius:999px;font-size:12px}.tag-choice{position:relative;cursor:pointer;user-select:none;font-size:13px!important;padding:7px 12px!important;transition:background .15s,color .15s}.tag-choice input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}.tag-choice.on{background:var(--accent)!important;color:#fff;border-color:var(--accent)!important}.tag-choice.on::before{content:"✓";font-weight:700}.tag-choice:focus-within{outline:2px solid #9fbea5;outline-offset:1px}
 .tag-create{display:flex;gap:7px;margin-top:8px}.tag-create input{flex:1;min-width:0}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:10px}
@@ -92,7 +92,7 @@ button{font:inherit;font-size:14px;border:0;border-radius:10px;padding:10px 14px
  <h2 id="formTitle">旅行の思い出を記録</h2>
  <div class="notice" id="notice">ブラウザ保存モード：記録はこの端末のブラウザ内に保存されます。夫婦で自動同期するには、公開後に共有データベースの設定が必要です。</div>
  <form id="entryForm">
-  <div class="field"><label for="tripDate">旅行日</label><input id="tripDate" type="date" required></div>
+  <div class="form-grid"><div class="field"><label for="tripDate">チェックイン</label><input id="tripDate" type="date" required></div><div class="field"><label for="tripEnd">チェックアウト</label><input id="tripEnd" type="date"></div></div><div class="hint" id="nightsHint">日帰りの場合は、チェックアウトを空欄にしてください。</div>
   <div class="field"><label for="hotel">宿泊施設</label><div class="ac"><input id="hotel" type="text" placeholder="宿泊施設名を入力" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="acList" aria-expanded="false"><ul id="acList" class="ac-list" role="listbox" hidden></ul></div><div class="hint" id="hotelHelp">Googleマップ連携を設定すると、候補から選んで宿泊施設名・住所・都道府県を自動入力できます（このページ下部の「Googleマップ連携の設定」）。</div></div>
   <div class="actions"><button class="soft" type="button" id="mapPickBtn" hidden>地図から宿泊先を選ぶ</button><button class="soft" type="button" id="mapsBtn">Googleマップで探す</button></div>
   <div id="gmapWrap" hidden><div id="gmap"></div><div class="hint">地図上の宿泊施設のアイコンをタップすると、宿泊施設名・住所・都道府県が自動で入ります。</div></div>
@@ -108,7 +108,7 @@ button{font:inherit;font-size:14px;border:0;border-radius:10px;padding:10px 14px
  <div class="actions" style="margin-top:14px"><button class="soft" id="exportBtn" type="button">バックアップを書き出す</button><button class="soft" id="importBtn" type="button">読み込む</button><input id="importFile" type="file" accept="application/json" hidden></div>
  <details class="gsettings" id="gsettings">
   <summary>Googleマップ連携の設定</summary>
-  <div class="row"><input id="gKey" type="password" placeholder="Google Maps Platform の APIキー" autocomplete="off"><button class="soft" type="button" id="gKeySave">保存</button><button class="soft" type="button" id="gKeyClear">削除</button></div>
+  <div class="row"><input id="gKey" type="password" placeholder="Google Maps Platform の APIキー" autocomplete="off"><button class="soft" type="button" id="gKeySave">保存</button><button class="soft" type="button" id="gKeyClear">削除</button></div><div class="row"><button class="soft" type="button" id="gTest">接続テスト</button></div>
   <div class="hint" id="gKeyState">未設定</div>
   <ol>
    <li>Google Cloud でプロジェクトを作り、請求先アカウントを設定</li>
@@ -139,6 +139,12 @@ const key="futari-travel-map-v3-"+(room||"local");
 const colors=["#f5f5f0","#d9ead8","#a9d0a8","#69a875","#286341"];
 let toastTimer=null,saveMsg="";function status(t,c="",toast=true){const e=$("status");e.textContent=t;e.className="status "+c;if(!toast)return;const el=$("toast");el.textContent=t;el.className="show"+(c==="err"?" err":"");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.className=el.className.replace("show",""),c==="err"?4500:2600)}
 function newId(){return "trip-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)}
+function localToday(){return new Date().toLocaleDateString("sv-SE")}
+function addDays(v,n){const d=new Date(v+"T00:00:00");d.setDate(d.getDate()+n);return d.toLocaleDateString("sv-SE")}
+function nightsOf(a,b){return Math.round((new Date(b+"T00:00:00")-new Date(a+"T00:00:00"))/864e5)}
+function fmtDate(v,withYear=true){const d=new Date(v+"T00:00:00");if(isNaN(d))return v;return (withYear?d.getFullYear()+"/":"")+(d.getMonth()+1)+"/"+d.getDate()+"("+"日月火水木金土"[d.getDay()]+")"}
+function fmtRange(t){if(!t.date)return "日付なし";if(!t.endDate||t.endDate<=t.date)return fmtDate(t.date)+(t.endDate===""?"・日帰り":"");const n=nightsOf(t.date,t.endDate);return fmtDate(t.date)+"〜"+fmtDate(t.endDate,t.endDate.slice(0,4)!==t.date.slice(0,4))+"・"+n+"泊"}
+function updateNights(){const a=$("tripDate").value,b=$("tripEnd").value,h=$("nightsHint");h.className="hint";if(!a){h.textContent="日帰りの場合は、チェックアウトを空欄にしてください。";return}if(!b){h.textContent="日帰り";return}const n=nightsOf(a,b);if(n<0){h.textContent="チェックアウトがチェックインより前になっています。";h.className="hint err";return}h.textContent=n===0?"日帰り":n+"泊"+(n+1)+"日"}
 function prefFromText(s){s=String(s||"");let best="",idx=Infinity;prefectures.forEach(p=>{const i=s.indexOf(p);if(i>=0&&i<idx){idx=i;best=p}});return best}
 
 /* ===== タグ ===== */
@@ -171,25 +177,26 @@ function drawPrefDetail(){
  $("pdCount").textContent=list.length?"訪問"+list.length+"回":"まだ記録なし";
  const ul=$("pdList");ul.innerHTML="";
  if(!list.length){const li=document.createElement("li");li.className="hint";li.textContent="この県の旅行記録はまだありません。";ul.append(li)}
- list.forEach(t=>{const li=document.createElement("li"),b=document.createElement("button");b.type="button";const d=document.createElement("span");d.className="d";d.textContent=t.date||"日付なし";const h=document.createElement("span");h.className="h";h.textContent=t.hotel||(t.memo?t.memo.split("\n")[0]:"（宿泊施設未入力）");b.append(d,h);b.title="この記録を編集";b.onclick=()=>loadForm(t);li.append(b);ul.append(li)});
+ list.forEach(t=>{const li=document.createElement("li"),b=document.createElement("button");b.type="button";const d=document.createElement("span");d.className="d";d.textContent=fmtRange(t);const h=document.createElement("span");h.className="h";h.textContent=t.hotel||(t.memo?t.memo.split("\n")[0]:"（宿泊施設未入力）");b.append(d,h);b.title="この記録を編集";b.onclick=()=>loadForm(t);li.append(b);ul.append(li)});
 }
 $("pdClose").onclick=clearPrefFocus;
-$("pdAdd").onclick=()=>{const n=focusPref;resetForm();select.value=n;activePref=n;$("formTitle").textContent=n+" の旅行を記録";$("tripDate").value=new Date().toISOString().slice(0,10);scrollToEl($("entryForm"));setTimeout(()=>$("hotel").focus({preventScroll:true}),350)};
+$("pdAdd").onclick=()=>{const n=focusPref;resetForm();select.value=n;activePref=n;$("formTitle").textContent=n+" の旅行を記録";scrollToEl($("entryForm"));setTimeout(()=>$("hotel").focus({preventScroll:true}),350)};
 $("pdAll").onclick=()=>scrollToEl($("recordsTop"));
 $("filterPref").onchange=()=>{const v=$("filterPref").value;if(v)choosePref(v);else clearPrefFocus()};
 function scrollToEl(el){window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"})}
 
 /* ===== フォーム ===== */
-function resetForm(){selectedId=null;$("saveBtn").textContent="旅行記録を保存";currentPlace=null;$("entryForm").reset();select.value="";$("formTitle").textContent="旅行の思い出を記録";renderTags();activePref="";clearPlaceSearch()}
-function loadForm(t){selectedId=t.id;$("saveBtn").textContent="変更を保存";activePref=t.pref||"";currentPlace=t.placeId?{id:t.placeId,lat:t.lat,lng:t.lng}:null;$("tripDate").value=t.date||"";$("hotel").value=t.hotel||"";$("hotelAddress").value=t.address||"";select.value=t.pref||"";$("memo").value=t.memo||"";$("formTitle").textContent="旅行記録を編集";renderTags(t.tags||[]);if(gmap&&currentPlace?.lat!=null)showPlaceOnMap(currentPlace);scrollToEl($("entryForm"))}
+function resetForm(){setTimeout(updateNights);selectedId=null;$("saveBtn").textContent="旅行記録を保存";currentPlace=null;$("entryForm").reset();select.value="";$("formTitle").textContent="旅行の思い出を記録";renderTags();activePref="";clearPlaceSearch()}
+function loadForm(t){selectedId=t.id;$("saveBtn").textContent="変更を保存";activePref=t.pref||"";currentPlace=t.placeId?{id:t.placeId,lat:t.lat,lng:t.lng}:null;$("tripDate").value=t.date||"";$("tripEnd").value=t.endDate||"";updateNights();$("hotel").value=t.hotel||"";$("hotelAddress").value=t.address||"";select.value=t.pref||"";$("memo").value=t.memo||"";$("formTitle").textContent="旅行記録を編集";renderTags(t.tags||[]);if(gmap&&currentPlace?.lat!=null)showPlaceOnMap(currentPlace);scrollToEl($("entryForm"))}
 function drawCards(){const query=$("searchRecords").value.trim().toLocaleLowerCase();const tag=$("filterTag").value;const pref=$("filterPref").value;const entries=[...trips].filter(t=>(!pref||t.pref===pref)&&(!tag||(t.tags||[]).includes(tag))&&(!query||[t.hotel,t.address,t.pref,t.memo,(t.tags||[]).join(" ")].join(" ").toLocaleLowerCase().includes(query))).sort((a,b)=>(b.date||"").localeCompare(a.date||""));$("recordCount").textContent=(pref?pref+"：":"")+entries.length+"件";$("records").innerHTML="";
 if(!trips.length){$("records").innerHTML='<p class="hint">まだ記録がありません。旅行日と宿泊施設を登録してみてね。</p>';return}
 if(!entries.length){$("records").innerHTML='<p class="hint">該当する旅行記録がありません。</p>';return}
-entries.forEach(t=>{const card=document.createElement("article");card.className="trip-card";const top=document.createElement("div");top.className="trip-card-top";const h=document.createElement("h3");h.textContent=t.hotel||t.pref+"の旅行";const date=document.createElement("div");date.className="trip-date";date.textContent=[t.date,t.pref].filter(Boolean).join(" · ");top.append(h,date);const body=document.createElement("div");body.className="trip-card-body";if(t.address){const p=document.createElement("p");p.textContent="📍 "+t.address;body.append(p)}if(t.memo){const p=document.createElement("p");p.textContent=t.memo;body.append(p)}if(t.tags?.length){const ts=document.createElement("div");ts.className="tags";t.tags.forEach(tag=>{const s=document.createElement("span");s.className="tag";s.textContent=tag;ts.append(s)});body.append(ts)}const acts=document.createElement("div");acts.className="card-actions";const edit=document.createElement("button");edit.className="soft";edit.textContent="編集";edit.onclick=()=>loadForm(t);const del=document.createElement("button");del.className="danger";del.textContent="削除";del.onclick=()=>{if(confirm("この旅行記録を削除しますか？")){trips=trips.filter(x=>x.id!==t.id);if(selectedId===t.id)resetForm();saveMsg="記録を削除しました。";persist()}};acts.append(edit,del);body.append(acts);card.append(top,body);$("records").append(card)})
+entries.forEach(t=>{const card=document.createElement("article");card.className="trip-card";const top=document.createElement("div");top.className="trip-card-top";const h=document.createElement("h3");h.textContent=t.hotel||t.pref+"の旅行";const date=document.createElement("div");date.className="trip-date";date.textContent=[fmtRange(t),t.pref].filter(Boolean).join(" · ");top.append(h,date);const body=document.createElement("div");body.className="trip-card-body";if(t.address){const p=document.createElement("p");p.textContent="📍 "+t.address;body.append(p)}if(t.memo){const p=document.createElement("p");p.textContent=t.memo;body.append(p)}if(t.tags?.length){const ts=document.createElement("div");ts.className="tags";t.tags.forEach(tag=>{const s=document.createElement("span");s.className="tag";s.textContent=tag;ts.append(s)});body.append(ts)}const acts=document.createElement("div");acts.className="card-actions";const edit=document.createElement("button");edit.className="soft";edit.textContent="編集";edit.onclick=()=>loadForm(t);const del=document.createElement("button");del.className="danger";del.textContent="削除";del.onclick=()=>{if(confirm("この旅行記録を削除しますか？")){trips=trips.filter(x=>x.id!==t.id);if(selectedId===t.id)resetForm();saveMsg="記録を削除しました。";persist()}};acts.append(edit,del);body.append(acts);card.append(top,body);$("records").append(card)})
 }
 function persist(){try{localStorage.setItem(key,JSON.stringify({version:3,trips,tagList}))}catch(e){status("保存できませんでした。ブラウザの設定を確認してください。","err");return}drawMap();drawCards();drawPrefDetail();updateTagFilter();status(saveMsg||"保存しました。","ok");saveMsg=""}
-$("entryForm").onsubmit=e=>{e.preventDefault();const pref=select.value;if(!pref){status("都道府県を選択してください。","err");return}const entry={id:selectedId||newId(),date:$("tripDate").value,hotel:$("hotel").value.trim(),address:$("hotelAddress").value.trim(),pref,tags:selectedTags(),memo:$("memo").value.trim()};if(currentPlace?.id){entry.placeId=currentPlace.id;entry.lat=currentPlace.lat;entry.lng=currentPlace.lng}if(!entry.date){status("旅行日を入力してください。","err");return}const idx=trips.findIndex(t=>t.id===entry.id);if(idx>=0)trips[idx]=entry;else trips.push(entry);saveMsg=idx>=0?"変更を保存しました。":(entry.hotel?"「"+entry.hotel+"」を記録しました（"+entry.pref+"）":entry.pref+"の旅行を記録しました。");persist();resetForm()};
+$("entryForm").onsubmit=e=>{e.preventDefault();const pref=select.value;if(!pref){status("都道府県を選択してください。","err");return}const entry={id:selectedId||newId(),date:$("tripDate").value,endDate:$("tripEnd").value,hotel:$("hotel").value.trim(),address:$("hotelAddress").value.trim(),pref,tags:selectedTags(),memo:$("memo").value.trim()};if(currentPlace?.id){entry.placeId=currentPlace.id;entry.lat=currentPlace.lat;entry.lng=currentPlace.lng}if(!entry.date){status("チェックインの日付を入力してください。","err");return}if(entry.endDate&&entry.endDate<entry.date){status("チェックアウトがチェックインより前になっています。","err");return}if(entry.endDate===entry.date)entry.endDate="";const idx=trips.findIndex(t=>t.id===entry.id);if(idx>=0)trips[idx]=entry;else trips.push(entry);saveMsg=idx>=0?"変更を保存しました。":(entry.hotel?"「"+entry.hotel+"」を記録しました（"+entry.pref+"）":entry.pref+"の旅行を記録しました。");persist();resetForm()};
 $("clearBtn").onclick=resetForm;
+$("tripDate").addEventListener("change",()=>{const a=$("tripDate").value,b=$("tripEnd").value;if(a&&(!b||b<a))$("tripEnd").value=addDays(a,1);updateNights()});$("tripEnd").addEventListener("change",updateNights);
 select.onchange=()=>{activePref=select.value};
 // 住所を手入力・貼り付けしたときも都道府県を自動判定
 $("hotelAddress").addEventListener("input",()=>{const p=prefFromText($("hotelAddress").value);if(p&&select.value!==p){select.value=p;activePref=p;status("住所から「"+p+"」を判定しました。","ok")}});
@@ -229,9 +236,9 @@ async function loadMap(){try{const res=await fetch("https://raw.githubuserconten
  mapReady=true;drawMap();status("地図を読み込みました。県をタップして旅行を記録しよう。","ok",false)}catch(err){console.error(err);svg.setAttribute("viewBox","0 0 700 660");svg.innerHTML='<text x="350" y="310" text-anchor="middle" fill="#728078" font-size="17">地図を読み込めませんでした</text><text x="350" y="340" text-anchor="middle" fill="#728078" font-size="12">ネット接続を確認して再読み込みしてください</text>';status("地図データの取得に失敗しました。","err",false)}}
 
 /* ===== Googleマップ連携（Places API New） ===== */
-let gReady=false,gmap=null,gMarker=null,PlaceCls=null,AutoSug=null,TokenCls=null,sessionToken=null,acTimer=null,acItems=[],acIndex=-1,acSeq=0;
+let gLoadError="",gReady=false,gmap=null,gMarker=null,PlaceCls=null,AutoSug=null,TokenCls=null,sessionToken=null,acTimer=null,acItems=[],acIndex=-1,acSeq=0;
 function getGKey(){if(GMAPS_API_KEY)return GMAPS_API_KEY;try{return localStorage.getItem(GKEY_STORE)||""}catch{return ""}}
-function loadGoogleMaps(k){return new Promise((res,rej)=>{window.__gmInit=()=>res();window.gm_authFailure=()=>{gReady=false;status("Googleマップの認証に失敗しました。APIキーと、APIの有効化・リファラー制限を確認してください。","err");$("gKeyState").textContent="認証エラー：キーの設定を確認してください";};const sc=document.createElement("script");sc.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(k)+"&v=weekly&language=ja&region=JP&loading=async&callback=__gmInit";sc.async=true;sc.onerror=()=>rej(Error("load"));document.head.append(sc)})}
+function loadGoogleMaps(k){return new Promise((res,rej)=>{window.__gmInit=()=>res();window.gm_authFailure=()=>{gReady=false;gLoadError="APIキーの認証に失敗しました（キーの値・ウェブサイト制限・Maps JavaScript API の有効化を確認）";status("Googleマップの認証に失敗しました。APIキーと、APIの有効化・リファラー制限を確認してください。","err");$("gKeyState").textContent="認証エラー：キーの設定を確認してください";};const sc=document.createElement("script");sc.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(k)+"&v=weekly&language=ja&region=JP&loading=async&callback=__gmInit";sc.async=true;sc.onerror=()=>{gLoadError="Googleマップのプログラムを読み込めませんでした（通信状態を確認）";rej(Error("load"))};document.head.append(sc)})}
 async function initGoogle(){
  const k=getGKey();$("gKey").value=GMAPS_API_KEY?"":k;
  $("gKeyState").textContent=GMAPS_API_KEY?"HTML内のAPIキーを使用中":(k?"設定済み（この端末に保存）":"未設定");
@@ -257,7 +264,7 @@ async function fetchSuggestions(q){
   if(!suggestions.length)({suggestions}=await AutoSug.fetchAutocompleteSuggestions(base)); // 宿泊施設で見つからなければ全種類から
   if(seq!==acSeq||$("hotel").value.trim()!==q)return;
   renderAc(suggestions.map(x=>x.placePrediction).filter(Boolean));
- }catch(e){console.error(e);hideAc();status("候補を取得できませんでした。Places API (New) が有効か、APIキーの制限（ウェブサイト・API）を確認してください。","err")}
+ }catch(e){console.error(e);hideAc();const m=explainGError(e);$("hotelHelp").textContent="候補を取得できませんでした："+m;$("hotelHelp").className="hint err";status("候補を取得できませんでした。","err")}
 }
 function renderAc(preds){
  const ul=$("acList");ul.innerHTML="";acItems=preds;acIndex=-1;
@@ -268,7 +275,7 @@ function renderAc(preds){
 }
 function pickAc(i){const pr=acItems[i];if(!pr)return;hideAc();applyPlace(pr.toPlace()).finally(()=>{sessionToken=null})}
 function moveAc(d){const lis=[...$("acList").querySelectorAll('li[role="option"]')];if(!lis.length)return;acIndex=(acIndex+d+lis.length)%lis.length;lis.forEach((li,i)=>li.classList.toggle("active",i===acIndex));lis[acIndex].scrollIntoView({block:"nearest"})}
-$("hotel").addEventListener("input",()=>{currentPlace=null;if(!gReady)return;clearTimeout(acTimer);const q=$("hotel").value.trim();if(q.length<2){hideAc();return}acTimer=setTimeout(()=>fetchSuggestions(q),250)});
+$("hotel").addEventListener("input",()=>{currentPlace=null;if(!gReady){if($("hotel").value.trim().length>=2&&!$("hotelHelp").dataset.warned){$("hotelHelp").dataset.warned=1;$("hotelHelp").className="hint err";$("hotelHelp").textContent=getGKey()?"Googleマップ連携の読み込みに失敗しているため候補が出ません。"+(gLoadError?"（"+gLoadError+"）":"")+"ページ下部の「接続テスト」で原因を確認できます。":"Googleマップ連携が未設定のため候補は出ません（ページ下部の「Googleマップ連携の設定」でAPIキーを保存してください）。"}return}clearTimeout(acTimer);const q=$("hotel").value.trim();if(q.length<2){hideAc();return}acTimer=setTimeout(()=>fetchSuggestions(q),250)});
 $("hotel").addEventListener("keydown",e=>{if($("acList").hidden)return;if(e.key==="ArrowDown"){e.preventDefault();moveAc(1)}else if(e.key==="ArrowUp"){e.preventDefault();moveAc(-1)}else if(e.key==="Enter"&&acIndex>=0){e.preventDefault();pickAc(acIndex)}else if(e.key==="Escape")hideAc()});
 $("hotel").addEventListener("blur",()=>setTimeout(hideAc,150));
 async function applyPlace(place){
@@ -282,7 +289,6 @@ async function applyPlace(place){
   $("hotelAddress").value=addr;
   if(pref){select.value=pref;activePref=pref;if(!selectedId)$("formTitle").textContent=pref+" の旅行を記録"}
   currentPlace={id:place.id,lat:place.location?.lat(),lng:place.location?.lng()};
-  if(!$("tripDate").value)$("tripDate").value=new Date().toISOString().slice(0,10);
   if(gmap)showPlaceOnMap(currentPlace);
   status(pref?"「"+name+"」を入力しました（"+pref+"）。":"「"+name+"」を入力しました。都道府県を確認してください。",pref?"ok":"");
  }catch(e){console.error(e);status("宿泊施設の情報を取得できませんでした。","err")}
@@ -302,6 +308,21 @@ $("mapPickBtn").onclick=async()=>{
   if(currentPlace?.lat!=null)showPlaceOnMap(currentPlace);
  }catch(e){console.error(e);status("地図を表示できませんでした。Maps JavaScript API が有効か確認してください。","err")}
 };
+function explainGError(e){const m=String(e?.message||e||"");
+ if(/REFERER|REFERRER|referer/i.test(m))return "このURLからの利用がキーで許可されていません（ウェブサイト制限のURLを確認）。詳細："+m;
+ if(/not authorized|API_KEY_SERVICE_BLOCKED|blocked/i.test(m))return "このキーで Places API (New) が許可されていません（キーの「APIの制限」に Places API (New) を追加）。詳細："+m;
+ if(/has not been used|disabled|SERVICE_DISABLED/i.test(m))return "Places API (New) が有効になっていません（ライブラリで有効化）。詳細："+m;
+ if(/billing|BILLING/i.test(m))return "請求先アカウントがプロジェクトに紐付いていません。詳細："+m;
+ if(/quota|RESOURCE_EXHAUSTED|429/i.test(m))return "1日の上限に達したか、上限が0になっています（割り当てを確認）。詳細："+m;
+ if(/API key not valid|INVALID_ARGUMENT|invalid/i.test(m))return "APIキーが正しくありません（コピーの抜けや空白を確認）。詳細："+m;
+ return m||"不明なエラー"}
+$("gTest").onclick=async()=>{const st=$("gKeyState");st.className="hint";
+ if(!getGKey()){st.textContent="APIキーが保存されていません。";st.className="hint err";return}
+ if(gLoadError){st.textContent="NG："+gLoadError;st.className="hint err";return}
+ if(!gReady){st.textContent="Googleマップを読み込み中か、読み込みに失敗しています。数秒待ってからもう一度押してください。";st.className="hint err";return}
+ st.textContent="テスト中…";
+ try{const {suggestions}=await AutoSug.fetchAutocompleteSuggestions({input:"京都 ホテル",includedRegionCodes:["jp"],language:"ja"});st.textContent="OK：Googleから候補を"+suggestions.length+"件取得できました。宿泊施設名を2文字以上入力すると候補が出ます。";st.className="hint ok"}
+ catch(e){console.error(e);st.textContent="NG："+explainGError(e);st.className="hint err"}};
 $("gKeySave").onclick=()=>{const v=$("gKey").value.trim();if(!v){status("APIキーを入力してください。","err");return}try{localStorage.setItem(GKEY_STORE,v)}catch{status("キーを保存できませんでした。","err");return}location.reload()};
 $("gKeyClear").onclick=()=>{try{localStorage.removeItem(GKEY_STORE)}catch{}location.reload()};
 
