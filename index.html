@@ -17,12 +17,13 @@ main{max-width:1250px;margin:auto;padding:16px;display:grid;grid-template-column
 .hint{font-size:12px;color:var(--muted);line-height:1.6}.progress{height:6px;background:#edf0e9;border-radius:99px;overflow:hidden;margin:10px 0}.progress span{display:block;height:100%;background:var(--accent);width:0}
 #map{width:100%;height:auto;max-height:720px;display:block;margin:0 auto;touch-action:manipulation}
 .inset-frame{fill:none;stroke:#cfd6cc;stroke-width:1;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
-.inset-label{font-size:11px;fill:#9aa69e}
+.inset-label{font-size:16px;fill:#9aa69e}
+.hit{fill:none;stroke:transparent;stroke-width:16px;vector-effect:non-scaling-stroke;pointer-events:stroke;cursor:pointer}
 .map-note{text-align:center;margin:0;color:var(--muted);font-size:12px}
 h2{font-size:16px;margin:0 0 12px}.field{margin:12px 0}.field label{display:block;font-size:12px;font-weight:650;margin-bottom:6px}
 .field input,.field textarea,.field select{font:inherit;font-size:14px;width:100%;border:1px solid var(--line);border-radius:10px;padding:10px;background:white;color:var(--ink)}
 textarea{min-height:80px;resize:vertical}
-button{font:inherit;border:0;border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:650}.primary{background:var(--accent);color:white}.soft{background:#edf2eb;color:var(--ink)}.danger{background:#fbefea;color:#8b4738}
+button{font:inherit;font-size:14px;border:0;border-radius:10px;padding:10px 14px;cursor:pointer;font-weight:650;line-height:1.3}.primary{background:var(--accent);color:white}.soft{background:#edf2eb;color:var(--ink)}.danger{background:#fbefea;color:#8b4738}
 .actions{display:flex;flex-wrap:wrap;gap:8px}.status{font-size:12px;color:var(--muted);margin-top:9px}.status.ok{color:#32704e}.status.err{color:#a04435}
 .notice{background:#fff8e8;border:1px solid #e9d6a4;border-radius:12px;padding:11px;font-size:12px;line-height:1.6;margin-bottom:12px}
 .section-title{display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -38,29 +39,35 @@ button{font:inherit;border:0;border-radius:10px;padding:10px 12px;cursor:pointer
 .pd-list .d{font-size:11px;color:var(--muted);white-space:nowrap}
 .pd-list .h{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
-.tag-options{display:flex;flex-wrap:wrap;gap:7px}.tag-choice{display:inline-flex;align-items:center;gap:5px;background:#f2f4ef;border:1px solid var(--line);padding:7px 9px;border-radius:999px;font-size:12px}.tag-choice input{width:auto;margin:0}
+.tag-options{display:flex;flex-wrap:wrap;gap:7px}.tag-choice{display:inline-flex;align-items:center;gap:5px;background:#f2f4ef;border:1px solid var(--line);padding:7px 9px;border-radius:999px;font-size:12px}.tag-choice{position:relative;cursor:pointer;user-select:none;font-size:13px!important;padding:7px 12px!important;transition:background .15s,color .15s}.tag-choice input{position:absolute;opacity:0;width:1px;height:1px;margin:0;pointer-events:none}.tag-choice.on{background:var(--accent)!important;color:#fff;border-color:var(--accent)!important}.tag-choice.on::before{content:"✓";font-weight:700}.tag-choice:focus-within{outline:2px solid #9fbea5;outline-offset:1px}
 .tag-create{display:flex;gap:7px;margin-top:8px}.tag-create input{flex:1;min-width:0}
-.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-top:10px}
 .trip-card{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;min-width:0}
-.trip-card-top{padding:12px 12px 9px;background:#f4f6f1}.trip-card h3{font-size:14px;margin:0 0 5px;overflow-wrap:anywhere}.trip-date{font-size:11px;color:var(--muted)}
-.trip-card-body{padding:11px 12px}.trip-card p{font-size:12px;line-height:1.55;margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.tag{font-size:10px;background:#eaf1e9;color:#355e43;border-radius:99px;padding:4px 7px}.card-actions{display:flex;gap:6px;margin-top:10px}.card-actions button{font-size:11px;padding:6px 8px}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.filters input,.filters select{font:inherit;font-size:12px;border:1px solid var(--line);border-radius:9px;padding:8px;background:#fff;min-width:0;flex:1}
+.trip-card-top{padding:12px 12px 9px;background:#f4f6f1}.trip-card h3{font-size:14px;margin:0 0 5px;overflow-wrap:anywhere}.trip-date{font-size:12px;color:var(--muted)}
+.trip-card-body{padding:11px 12px}.trip-card p{font-size:12px;line-height:1.55;margin:5px 0;white-space:pre-wrap;overflow-wrap:anywhere}.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0}.tag{font-size:11px;background:#eaf1e9;color:#355e43;border-radius:99px;padding:4px 7px}.card-actions{display:flex;gap:6px;margin-top:10px}.card-actions button{font-size:12px;padding:7px 14px}
+.filters{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}.filters input,.filters select{font:inherit;font-size:13px;border:1px solid var(--line);border-radius:9px;padding:9px;background:#fff;min-width:0;width:100%;color:var(--ink)}.filters input{grid-column:1/-1}
 #hotelHelp{margin-top:6px}
 /* Googleマップ連携 */
-#hotelSearchWrap{margin-bottom:8px}
-#hotelSearchWrap:empty{display:none}
-gmp-place-autocomplete{width:100%;color-scheme:light}
+.ac{position:relative}
+.ac-list{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:20;background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 10px 28px #24332e22;list-style:none;margin:0;padding:4px;max-height:300px;overflow:auto}
+.ac-list li{padding:9px 10px;border-radius:8px;cursor:pointer;font-size:13px;line-height:1.4}
+.ac-list li .sub{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.ac-list li.active,.ac-list li:hover{background:#eef3ec}
+.ac-list li.empty{cursor:default;color:var(--muted);font-size:12px}.ac-list li.empty:hover{background:none}
+.ac-list li.foot{cursor:default;font-size:10px;color:#9aa69e;text-align:right;padding:4px 8px 2px}.ac-list li.foot:hover{background:none}
 #gmapWrap{margin-top:10px}
 #gmap{width:100%;height:300px;border-radius:12px;border:1px solid var(--line);overflow:hidden}
 .gsettings{margin-top:18px;border-top:1px dashed var(--line);padding-top:10px;font-size:12px}
 .gsettings summary{cursor:pointer;color:var(--muted);font-weight:650}
 .gsettings .row{display:flex;gap:7px;margin-top:8px}.gsettings input{flex:1;min-width:0;font:inherit;font-size:13px;border:1px solid var(--line);border-radius:9px;padding:8px}
 .gsettings ol{margin:8px 0 0;padding-left:18px;color:var(--muted);line-height:1.7}
-@media(max-width:800px){main{grid-template-columns:1fr;padding:10px}.panel{padding:12px}#map{max-height:390px}header{padding:21px 12px 15px}h1{font-size:23px}.logo{font-size:27px}.cards{grid-template-columns:1fr}#gmap{height:260px}}
+@media(max-width:960px){main{grid-template-columns:1fr;max-width:640px;padding:10px}.panel{padding:12px}#map{max-height:390px}header{padding:21px 12px 15px}h1{font-size:23px}.logo{font-size:27px}.cards{grid-template-columns:1fr}#gmap{height:260px}}
+#toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);background:#24332e;color:#fff;font-size:13px;padding:10px 16px;border-radius:999px;box-shadow:0 8px 24px #0003;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100% - 32px);text-align:center;z-index:50}#toast.show{opacity:1;transform:translate(-50%,0)}#toast.err{background:#a04435}
+@media(max-width:960px){.field input,.field textarea,.field select,.filters input,.filters select,.gsettings input{font-size:16px}}
 </style>
 </head>
 <body>
-<header><div class="kicker">MAPPING OUR DAYS</div><h1 class="logo">Tabi-log</h1><div class="sub">行った県を塗って、思い出を重ねよう。</div></header>
+<header><div class="kicker">MAPPING OUR DAYS</div><h1 class="logo">Tabi-log</h1><div class="sub">旅した県を塗って、思い出を記録しよう。</div></header>
 <main>
 <section class="panel">
  <div class="stats"><div><div class="count"><span id="visitedCount">0</span><small> / 47 都道府県</small></div><div class="hint">訪問回数に応じて色が濃くなるよ</div></div><button class="soft" id="shareBtn" type="button">共有リンクをコピー</button></div>
@@ -86,18 +93,18 @@ gmp-place-autocomplete{width:100%;color-scheme:light}
  <div class="notice" id="notice">ブラウザ保存モード：記録はこの端末のブラウザ内に保存されます。夫婦で自動同期するには、公開後に共有データベースの設定が必要です。</div>
  <form id="entryForm">
   <div class="field"><label for="tripDate">旅行日</label><input id="tripDate" type="date" required></div>
-  <div class="field"><label for="hotel">宿泊ホテル</label><div id="hotelSearchWrap"></div><input id="hotel" type="text" placeholder="ホテル名を入力"><div class="hint" id="hotelHelp">Googleマップ連携を設定すると、候補から選んでホテル名・住所・都道府県を自動入力できます（このページ下部の「Googleマップ連携の設定」）。</div></div>
+  <div class="field"><label for="hotel">宿泊施設</label><div class="ac"><input id="hotel" type="text" placeholder="宿泊施設名を入力" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="acList" aria-expanded="false"><ul id="acList" class="ac-list" role="listbox" hidden></ul></div><div class="hint" id="hotelHelp">Googleマップ連携を設定すると、候補から選んで宿泊施設名・住所・都道府県を自動入力できます（このページ下部の「Googleマップ連携の設定」）。</div></div>
   <div class="actions"><button class="soft" type="button" id="mapPickBtn" hidden>地図から宿泊先を選ぶ</button><button class="soft" type="button" id="mapsBtn">Googleマップで探す</button></div>
-  <div id="gmapWrap" hidden><div id="gmap"></div><div class="hint">地図上のホテルのアイコンをタップすると、ホテル名・住所・都道府県が自動で入ります。</div></div>
-  <div class="field"><label for="hotelAddress">ホテル住所（自動入力）</label><input id="hotelAddress" type="text" placeholder="ホテルを選ぶと住所が入ります"></div>
-  <div class="field"><label for="prefName">都道府県（ホテル住所から自動判定）</label><select id="prefName" required><option value="">ホテルを選ぶか、都道府県を選択</option></select></div>
+  <div id="gmapWrap" hidden><div id="gmap"></div><div class="hint">地図上の宿泊施設のアイコンをタップすると、宿泊施設名・住所・都道府県が自動で入ります。</div></div>
+  <div class="field"><label for="hotelAddress">住所（自動入力）</label><input id="hotelAddress" type="text" placeholder="宿泊施設を選ぶと住所が入ります"></div>
+  <div class="field"><label for="prefName">都道府県（住所から自動判定）</label><select id="prefName" required><option value="">宿泊施設を選ぶか、都道府県を選択</option></select></div>
   <div class="field"><label>タグ（複数選択できます）</label><div id="tagOptions" class="tag-options"></div><div class="tag-create"><input id="newTag" type="text" placeholder="新しいタグ（例：記念日）"><button class="soft" type="button" id="addTagBtn">タグ追加</button></div></div>
   <div class="field"><label for="memo">メモ</label><textarea id="memo" placeholder="食べたもの、景色、行った場所、また行きたい場所…"></textarea></div>
-  <div class="actions"><button class="primary" type="submit">旅行記録を保存</button><button class="soft" type="button" id="clearBtn">新規入力</button></div>
+  <div class="actions"><button class="primary" type="submit" id="saveBtn">旅行記録を保存</button><button class="soft" type="button" id="clearBtn">新規入力</button></div>
  </form>
  <div class="section-title" style="margin-top:22px" id="recordsTop"><h2 style="margin:0">旅行記録</h2><span class="hint" id="recordCount">0件</span></div>
- <div class="filters"><input id="searchRecords" type="search" placeholder="ホテル・メモを検索"><select id="filterTag"><option value="">すべてのタグ</option></select><select id="filterPref"><option value="">すべての都道府県</option></select></div>
- <div id="records" class="cards"><p class="hint">まだ記録がありません。旅行日とホテルを登録してみてね。</p></div>
+ <div class="filters"><input id="searchRecords" type="search" placeholder="宿泊施設・メモを検索"><select id="filterTag"><option value="">すべてのタグ</option></select><select id="filterPref"><option value="">すべての都道府県</option></select></div>
+ <div id="records" class="cards"><p class="hint">まだ記録がありません。旅行日と宿泊施設を登録してみてね。</p></div>
  <div class="actions" style="margin-top:14px"><button class="soft" id="exportBtn" type="button">バックアップを書き出す</button><button class="soft" id="importBtn" type="button">読み込む</button><input id="importFile" type="file" accept="application/json" hidden></div>
  <details class="gsettings" id="gsettings">
   <summary>Googleマップ連携の設定</summary>
@@ -112,6 +119,7 @@ gmp-place-autocomplete{width:100%;color-scheme:light}
  </details>
 </section>
 </main>
+<div id="toast" role="status" aria-live="polite"></div>
 <script>
 /* ===== 設定 ===== */
 // ここにAPIキーを書くと、画面の設定欄より優先されます（公開時は必ずHTTPリファラー制限をかけてください）
@@ -129,13 +137,13 @@ const prefCenter={};
 const room=new URLSearchParams(location.search).get("trip")||"";
 const key="futari-travel-map-v3-"+(room||"local");
 const colors=["#f5f5f0","#d9ead8","#a9d0a8","#69a875","#286341"];
-function status(t,c=""){const e=$("status");e.textContent=t;e.className="status "+c}
+let toastTimer=null,saveMsg="";function status(t,c="",toast=true){const e=$("status");e.textContent=t;e.className="status "+c;if(!toast)return;const el=$("toast");el.textContent=t;el.className="show"+(c==="err"?" err":"");clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.className=el.className.replace("show",""),c==="err"?4500:2600)}
 function newId(){return "trip-"+Date.now()+"-"+Math.random().toString(36).slice(2,8)}
 function prefFromText(s){s=String(s||"");let best="",idx=Infinity;prefectures.forEach(p=>{const i=s.indexOf(p);if(i>=0&&i<idx){idx=i;best=p}});return best}
 
 /* ===== タグ ===== */
 function selectedTags(){return [...$("tagOptions").querySelectorAll("input:checked")].map(x=>x.value)}
-function renderTags(checked=[]){$("tagOptions").innerHTML="";tagList.forEach(tag=>{let label=document.createElement("label");label.className="tag-choice";let cb=document.createElement("input");cb.type="checkbox";cb.value=tag;cb.checked=checked.includes(tag);label.append(cb,document.createTextNode(tag));$("tagOptions").append(label)});updateTagFilter()}
+function renderTags(checked=[]){$("tagOptions").innerHTML="";tagList.forEach(tag=>{let label=document.createElement("label");label.className="tag-choice";let cb=document.createElement("input");cb.type="checkbox";cb.value=tag;cb.checked=checked.includes(tag);label.classList.toggle("on",cb.checked);cb.onchange=()=>label.classList.toggle("on",cb.checked);label.append(cb,document.createTextNode(tag));$("tagOptions").append(label)});updateTagFilter()}
 function updateTagFilter(){const old=$("filterTag").value;$("filterTag").innerHTML='<option value="">すべてのタグ</option>';[...new Set([...tagList,...trips.flatMap(t=>t.tags||[])])].forEach(tag=>{let o=document.createElement("option");o.value=tag;o.textContent=tag;$("filterTag").append(o)});$("filterTag").value=old}
 function addTag(){const v=$("newTag").value.trim();if(!v)return;if(!tagList.includes(v))tagList.push(v);$("newTag").value="";const selected=selectedTags();renderTags([...selected,v]);}
 $("addTagBtn").onclick=addTag;$("newTag").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();addTag()}});
@@ -163,7 +171,7 @@ function drawPrefDetail(){
  $("pdCount").textContent=list.length?"訪問"+list.length+"回":"まだ記録なし";
  const ul=$("pdList");ul.innerHTML="";
  if(!list.length){const li=document.createElement("li");li.className="hint";li.textContent="この県の旅行記録はまだありません。";ul.append(li)}
- list.forEach(t=>{const li=document.createElement("li"),b=document.createElement("button");b.type="button";const d=document.createElement("span");d.className="d";d.textContent=t.date||"日付なし";const h=document.createElement("span");h.className="h";h.textContent=t.hotel||(t.memo?t.memo.split("\n")[0]:"（ホテル未入力）");b.append(d,h);b.title="この記録を編集";b.onclick=()=>loadForm(t);li.append(b);ul.append(li)});
+ list.forEach(t=>{const li=document.createElement("li"),b=document.createElement("button");b.type="button";const d=document.createElement("span");d.className="d";d.textContent=t.date||"日付なし";const h=document.createElement("span");h.className="h";h.textContent=t.hotel||(t.memo?t.memo.split("\n")[0]:"（宿泊施設未入力）");b.append(d,h);b.title="この記録を編集";b.onclick=()=>loadForm(t);li.append(b);ul.append(li)});
 }
 $("pdClose").onclick=clearPrefFocus;
 $("pdAdd").onclick=()=>{const n=focusPref;resetForm();select.value=n;activePref=n;$("formTitle").textContent=n+" の旅行を記録";$("tripDate").value=new Date().toISOString().slice(0,10);scrollToEl($("entryForm"));setTimeout(()=>$("hotel").focus({preventScroll:true}),350)};
@@ -172,21 +180,21 @@ $("filterPref").onchange=()=>{const v=$("filterPref").value;if(v)choosePref(v);e
 function scrollToEl(el){window.scrollTo({top:el.getBoundingClientRect().top+window.scrollY-20,behavior:"smooth"})}
 
 /* ===== フォーム ===== */
-function resetForm(){selectedId=null;currentPlace=null;$("entryForm").reset();select.value="";$("formTitle").textContent="旅行の思い出を記録";renderTags();activePref="";clearPlaceSearch()}
-function loadForm(t){selectedId=t.id;activePref=t.pref||"";currentPlace=t.placeId?{id:t.placeId,lat:t.lat,lng:t.lng}:null;$("tripDate").value=t.date||"";$("hotel").value=t.hotel||"";$("hotelAddress").value=t.address||"";select.value=t.pref||"";$("memo").value=t.memo||"";$("formTitle").textContent="旅行記録を編集";renderTags(t.tags||[]);if(gmap&&currentPlace?.lat!=null)showPlaceOnMap(currentPlace);scrollToEl($("entryForm"))}
+function resetForm(){selectedId=null;$("saveBtn").textContent="旅行記録を保存";currentPlace=null;$("entryForm").reset();select.value="";$("formTitle").textContent="旅行の思い出を記録";renderTags();activePref="";clearPlaceSearch()}
+function loadForm(t){selectedId=t.id;$("saveBtn").textContent="変更を保存";activePref=t.pref||"";currentPlace=t.placeId?{id:t.placeId,lat:t.lat,lng:t.lng}:null;$("tripDate").value=t.date||"";$("hotel").value=t.hotel||"";$("hotelAddress").value=t.address||"";select.value=t.pref||"";$("memo").value=t.memo||"";$("formTitle").textContent="旅行記録を編集";renderTags(t.tags||[]);if(gmap&&currentPlace?.lat!=null)showPlaceOnMap(currentPlace);scrollToEl($("entryForm"))}
 function drawCards(){const query=$("searchRecords").value.trim().toLocaleLowerCase();const tag=$("filterTag").value;const pref=$("filterPref").value;const entries=[...trips].filter(t=>(!pref||t.pref===pref)&&(!tag||(t.tags||[]).includes(tag))&&(!query||[t.hotel,t.address,t.pref,t.memo,(t.tags||[]).join(" ")].join(" ").toLocaleLowerCase().includes(query))).sort((a,b)=>(b.date||"").localeCompare(a.date||""));$("recordCount").textContent=(pref?pref+"：":"")+entries.length+"件";$("records").innerHTML="";
-if(!trips.length){$("records").innerHTML='<p class="hint">まだ記録がありません。旅行日とホテルを登録してみてね。</p>';return}
+if(!trips.length){$("records").innerHTML='<p class="hint">まだ記録がありません。旅行日と宿泊施設を登録してみてね。</p>';return}
 if(!entries.length){$("records").innerHTML='<p class="hint">該当する旅行記録がありません。</p>';return}
-entries.forEach(t=>{const card=document.createElement("article");card.className="trip-card";const top=document.createElement("div");top.className="trip-card-top";const h=document.createElement("h3");h.textContent=t.hotel||t.pref+"の旅行";const date=document.createElement("div");date.className="trip-date";date.textContent=[t.date,t.pref].filter(Boolean).join(" · ");top.append(h,date);const body=document.createElement("div");body.className="trip-card-body";if(t.address){const p=document.createElement("p");p.textContent="📍 "+t.address;body.append(p)}if(t.memo){const p=document.createElement("p");p.textContent=t.memo;body.append(p)}if(t.tags?.length){const ts=document.createElement("div");ts.className="tags";t.tags.forEach(tag=>{const s=document.createElement("span");s.className="tag";s.textContent=tag;ts.append(s)});body.append(ts)}const acts=document.createElement("div");acts.className="card-actions";const edit=document.createElement("button");edit.className="soft";edit.textContent="編集";edit.onclick=()=>loadForm(t);const del=document.createElement("button");del.className="danger";del.textContent="削除";del.onclick=()=>{if(confirm("この旅行記録を削除しますか？")){trips=trips.filter(x=>x.id!==t.id);persist()}};acts.append(edit,del);body.append(acts);card.append(top,body);$("records").append(card)})
+entries.forEach(t=>{const card=document.createElement("article");card.className="trip-card";const top=document.createElement("div");top.className="trip-card-top";const h=document.createElement("h3");h.textContent=t.hotel||t.pref+"の旅行";const date=document.createElement("div");date.className="trip-date";date.textContent=[t.date,t.pref].filter(Boolean).join(" · ");top.append(h,date);const body=document.createElement("div");body.className="trip-card-body";if(t.address){const p=document.createElement("p");p.textContent="📍 "+t.address;body.append(p)}if(t.memo){const p=document.createElement("p");p.textContent=t.memo;body.append(p)}if(t.tags?.length){const ts=document.createElement("div");ts.className="tags";t.tags.forEach(tag=>{const s=document.createElement("span");s.className="tag";s.textContent=tag;ts.append(s)});body.append(ts)}const acts=document.createElement("div");acts.className="card-actions";const edit=document.createElement("button");edit.className="soft";edit.textContent="編集";edit.onclick=()=>loadForm(t);const del=document.createElement("button");del.className="danger";del.textContent="削除";del.onclick=()=>{if(confirm("この旅行記録を削除しますか？")){trips=trips.filter(x=>x.id!==t.id);if(selectedId===t.id)resetForm();saveMsg="記録を削除しました。";persist()}};acts.append(edit,del);body.append(acts);card.append(top,body);$("records").append(card)})
 }
-function persist(){try{localStorage.setItem(key,JSON.stringify({version:3,trips,tagList}))}catch(e){status("保存できませんでした。ブラウザの設定を確認してください。","err");return}drawMap();drawCards();drawPrefDetail();updateTagFilter();status("このブラウザに保存しました。夫婦間の自動同期は未設定です。")}
-$("entryForm").onsubmit=e=>{e.preventDefault();const pref=select.value;if(!pref){status("都道府県を選択してください。","err");return}const entry={id:selectedId||newId(),date:$("tripDate").value,hotel:$("hotel").value.trim(),address:$("hotelAddress").value.trim(),pref,tags:selectedTags(),memo:$("memo").value.trim()};if(currentPlace?.id){entry.placeId=currentPlace.id;entry.lat=currentPlace.lat;entry.lng=currentPlace.lng}if(!entry.date){status("旅行日を入力してください。","err");return}const idx=trips.findIndex(t=>t.id===entry.id);if(idx>=0)trips[idx]=entry;else trips.push(entry);persist();resetForm()};
+function persist(){try{localStorage.setItem(key,JSON.stringify({version:3,trips,tagList}))}catch(e){status("保存できませんでした。ブラウザの設定を確認してください。","err");return}drawMap();drawCards();drawPrefDetail();updateTagFilter();status(saveMsg||"保存しました。","ok");saveMsg=""}
+$("entryForm").onsubmit=e=>{e.preventDefault();const pref=select.value;if(!pref){status("都道府県を選択してください。","err");return}const entry={id:selectedId||newId(),date:$("tripDate").value,hotel:$("hotel").value.trim(),address:$("hotelAddress").value.trim(),pref,tags:selectedTags(),memo:$("memo").value.trim()};if(currentPlace?.id){entry.placeId=currentPlace.id;entry.lat=currentPlace.lat;entry.lng=currentPlace.lng}if(!entry.date){status("旅行日を入力してください。","err");return}const idx=trips.findIndex(t=>t.id===entry.id);if(idx>=0)trips[idx]=entry;else trips.push(entry);saveMsg=idx>=0?"変更を保存しました。":(entry.hotel?"「"+entry.hotel+"」を記録しました（"+entry.pref+"）":entry.pref+"の旅行を記録しました。");persist();resetForm()};
 $("clearBtn").onclick=resetForm;
 select.onchange=()=>{activePref=select.value};
 // 住所を手入力・貼り付けしたときも都道府県を自動判定
 $("hotelAddress").addEventListener("input",()=>{const p=prefFromText($("hotelAddress").value);if(p&&select.value!==p){select.value=p;activePref=p;status("住所から「"+p+"」を判定しました。","ok")}});
 $("searchRecords").oninput=drawCards;$("filterTag").onchange=drawCards;
-$("mapsBtn").onclick=()=>{const q=$("hotel").value.trim();window.open("https://www.google.com/maps/search/"+encodeURIComponent((q||"ホテル")+(q?"":" "+(activePref||""))),"_blank","noopener");if(!gReady&&!$("hotelAddress").value)status("Googleマップでホテルを確認し、ホテル名・住所を入力してください（住所を貼り付けると都道府県は自動判定されます）。")};
+$("mapsBtn").onclick=()=>{const q=$("hotel").value.trim();window.open("https://www.google.com/maps/search/"+encodeURIComponent((q||"宿泊施設")+(q?"":" "+(activePref||""))),"_blank","noopener");if(!gReady&&!$("hotelAddress").value)status("Googleマップで宿泊施設を確認し、宿泊施設名・住所を入力してください（住所を貼り付けると都道府県は自動判定されます）。")};
 $("shareBtn").onclick=async()=>{if(!room){status("共有URLと自動同期は、公開後に共有データベースを設定してから有効になります。");return}try{await navigator.clipboard.writeText(location.href);status("共有リンクをコピーしました。","ok")}catch{prompt("このURLを共有してください",location.href)}};
 $("exportBtn").onclick=()=>{const a=document.createElement("a"),u=URL.createObjectURL(new Blob([JSON.stringify({version:3,trips,tagList},null,2)],{type:"application/json"}));a.href=u;a.download="futari-travel-map-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(u),1000)};
 $("importBtn").onclick=()=>$("importFile").click();$("importFile").onchange=async e=>{try{const file=e.target.files[0];if(!file)return;const d=JSON.parse(await file.text());if(!confirm("現在の記録を読み込んだデータで置き換えますか？"))return;if(Array.isArray(d.trips)){trips=d.trips;tagList=mergeTags(d.tagList)}else if(d.records&&typeof d.records==="object"){trips=Object.entries(d.records).map(([pref,r])=>({id:newId(),pref,date:r.date||"",hotel:r.hotel||"",address:r.address||"",memo:r.memo||"",tags:[]}));}else throw Error();renderTags();persist();status("バックアップを読み込みました。","ok")}catch{alert("ファイルを読み込めませんでした。バックアップ形式を確認してください。")}e.target.value=""};
@@ -217,11 +225,11 @@ async function loadMap(){try{const res=await fetch("https://raw.githubuserconten
   const d=rs.map(({r,z})=>{const pr=z==="main"?projMain:projInset;return r.map((pt,i)=>{const [x,y]=pr(pt);return(i?"L":"M")+x.toFixed(1)+" "+y.toFixed(1)}).join("")+"Z"}).join("");
   // Googleマップを開くときの中心（一番大きな陸地の中心）
   let big=rs.reduce((m,x)=>x.r.length>(m?.r.length||0)?x:m,null);if(big){let a=[Infinity,Infinity,-Infinity,-Infinity];big.r.forEach(([x,y])=>{a=[Math.min(a[0],x),Math.min(a[1],y),Math.max(a[2],x),Math.max(a[3],y)]});prefCenter[f.prefName]={lat:(a[1]+a[3])/2,lng:(a[0]+a[2])/2}}
-  const p=document.createElementNS(NS,"path");p.setAttribute("d",d);p.setAttribute("class","pref");p.dataset.name=f.prefName;p.setAttribute("fill",colors[0]);p.setAttribute("tabindex","0");p.addEventListener("click",()=>choosePref(f.prefName));p.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choosePref(f.prefName)}});const t=document.createElementNS(NS,"title");t.textContent=f.prefName;p.append(t);svg.append(p)});
- mapReady=true;drawMap();status("地図を読み込みました。県をタップして旅行を記録しよう。","ok")}catch(err){console.error(err);svg.setAttribute("viewBox","0 0 700 660");svg.innerHTML='<text x="350" y="310" text-anchor="middle" fill="#728078" font-size="17">地図を読み込めませんでした</text><text x="350" y="340" text-anchor="middle" fill="#728078" font-size="12">ネット接続を確認して再読み込みしてください</text>';status("地図データの取得に失敗しました。","err")}}
+  const p=document.createElementNS(NS,"path");p.setAttribute("d",d);p.setAttribute("class","pref");p.dataset.name=f.prefName;p.setAttribute("fill",colors[0]);p.setAttribute("tabindex","0");p.addEventListener("click",()=>choosePref(f.prefName));p.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();choosePref(f.prefName)}});const t=document.createElementNS(NS,"title");t.textContent=f.prefName;p.append(t);svg.append(p);if(f.prefName==="沖縄県"){const hit=document.createElementNS(NS,"path");hit.setAttribute("d",d);hit.setAttribute("class","hit");hit.addEventListener("click",()=>choosePref(f.prefName));svg.append(hit)}});
+ mapReady=true;drawMap();status("地図を読み込みました。県をタップして旅行を記録しよう。","ok",false)}catch(err){console.error(err);svg.setAttribute("viewBox","0 0 700 660");svg.innerHTML='<text x="350" y="310" text-anchor="middle" fill="#728078" font-size="17">地図を読み込めませんでした</text><text x="350" y="340" text-anchor="middle" fill="#728078" font-size="12">ネット接続を確認して再読み込みしてください</text>';status("地図データの取得に失敗しました。","err",false)}}
 
 /* ===== Googleマップ連携（Places API New） ===== */
-let gReady=false,gmap=null,gMarker=null,PlaceCls=null,pacEl=null;
+let gReady=false,gmap=null,gMarker=null,PlaceCls=null,AutoSug=null,TokenCls=null,sessionToken=null,acTimer=null,acItems=[],acIndex=-1,acSeq=0;
 function getGKey(){if(GMAPS_API_KEY)return GMAPS_API_KEY;try{return localStorage.getItem(GKEY_STORE)||""}catch{return ""}}
 function loadGoogleMaps(k){return new Promise((res,rej)=>{window.__gmInit=()=>res();window.gm_authFailure=()=>{gReady=false;status("Googleマップの認証に失敗しました。APIキーと、APIの有効化・リファラー制限を確認してください。","err");$("gKeyState").textContent="認証エラー：キーの設定を確認してください";};const sc=document.createElement("script");sc.src="https://maps.googleapis.com/maps/api/js?key="+encodeURIComponent(k)+"&v=weekly&language=ja&region=JP&loading=async&callback=__gmInit";sc.async=true;sc.onerror=()=>rej(Error("load"));document.head.append(sc)})}
 async function initGoogle(){
@@ -230,20 +238,39 @@ async function initGoogle(){
  if(!k)return;
  try{
   await loadGoogleMaps(k);
-  const {PlaceAutocompleteElement,Place}=await google.maps.importLibrary("places");PlaceCls=Place;
-  pacEl=new PlaceAutocompleteElement({includedRegionCodes:["jp"],includedPrimaryTypes:["lodging"]});
-  pacEl.setAttribute("placeholder","ホテル名で検索して選ぶ");
-  $("hotelSearchWrap").append(pacEl);
-  pacEl.addEventListener("gmp-select",e=>{if(e.placePrediction)applyPlace(e.placePrediction.toPlace())});
-  pacEl.addEventListener("gmp-placeselect",e=>{if(e.place)applyPlace(e.place)}); // 旧バージョン互換
-  pacEl.addEventListener("gmp-error",()=>status("ホテル候補を取得できませんでした。Places API (New) が有効か確認してください。","err"));
+  const lib=await google.maps.importLibrary("places");PlaceCls=lib.Place;AutoSug=lib.AutocompleteSuggestion;TokenCls=lib.AutocompleteSessionToken;
   gReady=true;
-  $("hotel").placeholder="ホテル名（検索で選ぶと自動入力）";
-  $("hotelHelp").textContent="上の検索欄でホテルを選ぶか「地図から宿泊先を選ぶ」でアイコンをタップすると、ホテル名・住所・都道府県が自動で入ります。";
+  $("hotel").placeholder="宿泊施設名を入力すると候補が出ます";
+  $("hotelHelp").textContent="2文字以上入力すると、Googleマップに登録された宿泊施設の候補が出ます。選ぶと宿泊施設名・住所・都道府県が自動で入ります。「地図から宿泊先を選ぶ」でアイコンをタップしてもOKです。";
   $("mapPickBtn").hidden=false;
  }catch(e){console.error(e);status("Googleマップを読み込めませんでした。","err")}
 }
-function clearPlaceSearch(){if(pacEl){try{pacEl.value=""}catch{}}}
+function clearPlaceSearch(){hideAc();sessionToken=null}
+/* 宿泊施設名の入力欄に候補を出す */
+function hideAc(){$("acList").hidden=true;$("hotel").setAttribute("aria-expanded","false");acItems=[];acIndex=-1}
+async function fetchSuggestions(q){
+ const seq=++acSeq;if(!sessionToken)sessionToken=new TokenCls();
+ const base={input:q,includedRegionCodes:["jp"],language:"ja",region:"jp",sessionToken};
+ const pref=select.value||focusPref;if(pref&&prefCenter[pref])base.locationBias={center:prefCenter[pref],radius:50000};
+ try{
+  let {suggestions}=await AutoSug.fetchAutocompleteSuggestions({...base,includedPrimaryTypes:["lodging"]});
+  if(!suggestions.length)({suggestions}=await AutoSug.fetchAutocompleteSuggestions(base)); // 宿泊施設で見つからなければ全種類から
+  if(seq!==acSeq||$("hotel").value.trim()!==q)return;
+  renderAc(suggestions.map(x=>x.placePrediction).filter(Boolean));
+ }catch(e){console.error(e);hideAc();status("候補を取得できませんでした。Places API (New) が有効か、APIキーの制限（ウェブサイト・API）を確認してください。","err")}
+}
+function renderAc(preds){
+ const ul=$("acList");ul.innerHTML="";acItems=preds;acIndex=-1;
+ if(!preds.length){const li=document.createElement("li");li.className="empty";li.textContent="候補が見つかりません（このまま手入力でも保存できます）";ul.append(li)}
+ preds.forEach((pr,i)=>{const li=document.createElement("li");li.setAttribute("role","option");li.textContent=pr.mainText?.text||pr.text?.text||"";if(pr.secondaryText?.text){const sub=document.createElement("span");sub.className="sub";sub.textContent=pr.secondaryText.text.replace(/^日本、\s*/,"");li.append(sub)}li.addEventListener("pointerdown",e=>{e.preventDefault();pickAc(i)});ul.append(li)});
+ const foot=document.createElement("li");foot.className="foot";foot.textContent="Powered by Google";ul.append(foot);
+ ul.hidden=false;$("hotel").setAttribute("aria-expanded","true");
+}
+function pickAc(i){const pr=acItems[i];if(!pr)return;hideAc();applyPlace(pr.toPlace()).finally(()=>{sessionToken=null})}
+function moveAc(d){const lis=[...$("acList").querySelectorAll('li[role="option"]')];if(!lis.length)return;acIndex=(acIndex+d+lis.length)%lis.length;lis.forEach((li,i)=>li.classList.toggle("active",i===acIndex));lis[acIndex].scrollIntoView({block:"nearest"})}
+$("hotel").addEventListener("input",()=>{currentPlace=null;if(!gReady)return;clearTimeout(acTimer);const q=$("hotel").value.trim();if(q.length<2){hideAc();return}acTimer=setTimeout(()=>fetchSuggestions(q),250)});
+$("hotel").addEventListener("keydown",e=>{if($("acList").hidden)return;if(e.key==="ArrowDown"){e.preventDefault();moveAc(1)}else if(e.key==="ArrowUp"){e.preventDefault();moveAc(-1)}else if(e.key==="Enter"&&acIndex>=0){e.preventDefault();pickAc(acIndex)}else if(e.key==="Escape")hideAc()});
+$("hotel").addEventListener("blur",()=>setTimeout(hideAc,150));
 async function applyPlace(place){
  try{
   await place.fetchFields({fields:["id","displayName","formattedAddress","addressComponents","location"]});
@@ -258,7 +285,7 @@ async function applyPlace(place){
   if(!$("tripDate").value)$("tripDate").value=new Date().toISOString().slice(0,10);
   if(gmap)showPlaceOnMap(currentPlace);
   status(pref?"「"+name+"」を入力しました（"+pref+"）。":"「"+name+"」を入力しました。都道府県を確認してください。",pref?"ok":"");
- }catch(e){console.error(e);status("ホテル情報を取得できませんでした。","err")}
+ }catch(e){console.error(e);status("宿泊施設の情報を取得できませんでした。","err")}
 }
 async function showPlaceOnMap(pl){if(!gmap||pl?.lat==null)return;const pos={lat:pl.lat,lng:pl.lng};gmap.panTo(pos);if(gmap.getZoom()<14)gmap.setZoom(15);const {AdvancedMarkerElement}=await google.maps.importLibrary("marker");if(!gMarker)gMarker=new AdvancedMarkerElement({map:gmap,position:pos});else{gMarker.position=pos;gMarker.map=gmap}}
 $("mapPickBtn").onclick=async()=>{
