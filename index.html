@@ -99,8 +99,8 @@ input[type=date]{-webkit-appearance:none;appearance:none;display:block;min-width
  <form id="entryForm">
   <div class="form-grid"><div class="field"><label for="tripDate">チェックイン</label><input id="tripDate" type="date" required></div><div class="field"><label for="tripEnd">チェックアウト</label><input id="tripEnd" type="date"></div></div><div class="hint" id="nightsHint">日帰りの場合は、チェックアウトを空欄にしてください。</div>
   <div class="field"><label for="hotel">宿泊施設</label><div class="ac"><input id="hotel" type="text" placeholder="宿泊施設名を入力" autocomplete="off" role="combobox" aria-autocomplete="list" aria-controls="acList" aria-expanded="false"><ul id="acList" class="ac-list" role="listbox" hidden></ul></div><div class="hint" id="hotelHelp"></div></div>
-  <div class="field"><label for="hotelAddress">住所（自動入力）</label><input id="hotelAddress" type="text" placeholder="宿泊施設を選ぶと住所が入ります"></div>
-  <div class="field"><label for="prefName">都道府県（住所から自動判定）</label><select id="prefName" required><option value="">宿泊施設を選ぶか、都道府県を選択</option></select></div>
+  <input id="hotelAddress" type="hidden">
+  <div class="field"><label for="prefName">都道府県（宿泊施設から自動判定）</label><select id="prefName" required><option value="">宿泊施設を選ぶか、都道府県を選択</option></select></div>
   <div class="field"><label>タグ（複数選択できます）</label><div id="tagOptions" class="tag-options"></div><div class="tag-create"><input id="newTag" type="text" placeholder="新しいタグ（例：記念日）"><button class="soft" type="button" id="addTagBtn">タグ追加</button></div></div>
   <div class="field"><label for="memo">メモ</label><textarea id="memo" placeholder="食べたもの、景色、行った場所、また行きたい場所…"></textarea></div>
   <div class="actions"><button class="primary" type="submit" id="saveBtn">旅行記録を保存</button><button class="soft" type="button" id="clearBtn">新規入力</button></div>
@@ -208,7 +208,7 @@ function loadForm(t){selectedId=t.id;$("saveBtn").textContent="変更を保存";
 function drawCards(){const query=$("searchRecords").value.trim().toLocaleLowerCase();const tag=$("filterTag").value;const pref=$("filterPref").value;const entries=[...trips].filter(t=>(!pref||t.pref===pref)&&(!tag||(t.tags||[]).includes(tag))&&(!query||[t.hotel,t.address,t.pref,t.memo,(t.tags||[]).join(" ")].join(" ").toLocaleLowerCase().includes(query))).sort((a,b)=>(b.date||"").localeCompare(a.date||""));$("recordCount").textContent=(pref?pref+"：":"")+entries.length+"件";$("records").innerHTML="";
 if(!trips.length){$("records").innerHTML='<p class="hint">まだ記録がありません。県をタップして、最初の旅を記録してみてね。</p>';return}
 if(!entries.length){$("records").innerHTML='<p class="hint">該当する旅行記録がありません。</p>';return}
-entries.forEach(t=>{const card=document.createElement("article");card.className="trip-card";const top=document.createElement("div");top.className="trip-card-top";const h=document.createElement("h3");h.textContent=t.hotel||t.pref+"の旅行";const date=document.createElement("div");date.className="trip-date";date.textContent=[fmtRange(t),t.pref].filter(Boolean).join(" · ");if(t.createdBy){const by=document.createElement("span");by.className="by";by.textContent="記録："+t.createdBy;date.append(by)}top.append(h,date);const body=document.createElement("div");body.className="trip-card-body";if(t.address){const p=document.createElement("p");const a=document.createElement("a");a.className="maplink";a.href=mapsUrl(t);a.target="_blank";a.rel="noopener";a.textContent="📍 "+t.address;a.title="Googleマップで開く";p.append(a);body.append(p)}if(t.memo){const p=document.createElement("p");p.textContent=t.memo;body.append(p)}if(t.tags?.length){const ts=document.createElement("div");ts.className="tags";t.tags.forEach(tag=>{const s=document.createElement("span");s.className="tag";s.textContent=tag;ts.append(s)});body.append(ts)}const acts=document.createElement("div");acts.className="card-actions";const edit=document.createElement("button");edit.className="soft";edit.textContent="編集";edit.onclick=()=>loadForm(t);const del=document.createElement("button");del.className="danger";del.textContent="削除";del.onclick=()=>{if(confirm("この旅行記録を削除しますか？")){trips=trips.filter(x=>x.id!==t.id);if(selectedId===t.id)resetForm();saveMsg="記録を削除しました。";persist({del:[t.id]})}};acts.append(edit,del);body.append(acts);card.append(top,body);$("records").append(card)})
+entries.forEach(t=>{const card=document.createElement("article");card.className="trip-card";const top=document.createElement("div");top.className="trip-card-top";const h=document.createElement("h3");h.textContent=t.hotel||t.pref+"の旅行";const date=document.createElement("div");date.className="trip-date";date.textContent=[fmtRange(t),t.pref].filter(Boolean).join(" · ");if(creatorName(t)){const by=document.createElement("span");by.className="by";by.textContent="記録："+creatorName(t);date.append(by)}top.append(h,date);const body=document.createElement("div");body.className="trip-card-body";if(t.address){const p=document.createElement("p");const a=document.createElement("a");a.className="maplink";a.href=mapsUrl(t);a.target="_blank";a.rel="noopener";a.textContent="📍 "+t.address;a.title="Googleマップで開く";p.append(a);body.append(p)}if(t.memo){const p=document.createElement("p");p.textContent=t.memo;body.append(p)}if(t.tags?.length){const ts=document.createElement("div");ts.className="tags";t.tags.forEach(tag=>{const s=document.createElement("span");s.className="tag";s.textContent=tag;ts.append(s)});body.append(ts)}const acts=document.createElement("div");acts.className="card-actions";const edit=document.createElement("button");edit.className="soft";edit.textContent="編集";edit.onclick=()=>loadForm(t);const del=document.createElement("button");del.className="danger";del.textContent="削除";del.onclick=()=>{if(confirm("この旅行記録を削除しますか？")){trips=trips.filter(x=>x.id!==t.id);if(selectedId===t.id)resetForm();saveMsg="記録を削除しました。";persist({del:[t.id]})}};acts.append(edit,del);body.append(acts);card.append(top,body);$("records").append(card)})
 }
 function persistLocal(){try{localStorage.setItem(key,JSON.stringify({version:3,trips,tagList}));return true}catch(e){return false}}
 function refreshAll(){drawMap();drawCards();drawPrefDetail();updateTagFilter()}
@@ -217,7 +217,7 @@ function persist(ch={}){const ok=persistLocal();refreshAll();
  else if(!ok)status("保存できませんでした。ブラウザの設定を確認してください。","err");
  else status(saveMsg||"保存しました。","ok");
  saveMsg=""}
-$("entryForm").onsubmit=e=>{e.preventDefault();const pref=select.value;if(!pref){status("都道府県を選択してください。","err");return}const entry={id:selectedId||newId(),date:$("tripDate").value,endDate:$("tripEnd").value,hotel:$("hotel").value.trim(),address:$("hotelAddress").value.trim(),pref,tags:selectedTags(),memo:$("memo").value.trim()};if(currentPlace?.id){entry.placeId=currentPlace.id;entry.lat=currentPlace.lat;entry.lng=currentPlace.lng}if(!entry.date){status("チェックインの日付を入力してください。","err");return}if(entry.endDate&&entry.endDate<entry.date){status("チェックアウトがチェックインより前になっています。","err");return}if(entry.endDate===entry.date)entry.endDate="";const idx=trips.findIndex(t=>t.id===entry.id);if(idx>=0&&trips[idx].createdBy)entry.createdBy=trips[idx].createdBy;if(cloud.user&&!entry.createdBy)entry.createdBy=myName();if(idx>=0)trips[idx]=entry;else trips.push(entry);saveMsg=idx>=0?"変更を保存しました。":(entry.hotel?"「"+entry.hotel+"」を記録しました（"+entry.pref+"）":entry.pref+"の旅行を記録しました。");persist({set:[entry]});resetForm()};
+$("entryForm").onsubmit=e=>{e.preventDefault();const pref=select.value;if(!pref){status("都道府県を選択してください。","err");return}const entry={id:selectedId||newId(),date:$("tripDate").value,endDate:$("tripEnd").value,hotel:$("hotel").value.trim(),address:$("hotelAddress").value.trim(),pref,tags:selectedTags(),memo:$("memo").value.trim()};if(currentPlace?.id){entry.placeId=currentPlace.id;entry.lat=currentPlace.lat;entry.lng=currentPlace.lng}if(!entry.date){status("チェックインの日付を入力してください。","err");return}if(entry.endDate&&entry.endDate<entry.date){status("チェックアウトがチェックインより前になっています。","err");return}if(entry.endDate===entry.date)entry.endDate="";const idx=trips.findIndex(t=>t.id===entry.id);if(idx>=0){if(trips[idx].createdBy)entry.createdBy=trips[idx].createdBy;if(trips[idx].createdByEmail)entry.createdByEmail=trips[idx].createdByEmail}if(cloud.user&&!entry.createdBy&&!entry.createdByEmail){entry.createdBy=myName();entry.createdByEmail=myEmail()}if(idx>=0)trips[idx]=entry;else trips.push(entry);saveMsg=idx>=0?"変更を保存しました。":(entry.hotel?"「"+entry.hotel+"」を記録しました（"+entry.pref+"）":entry.pref+"の旅行を記録しました。");persist({set:[entry]});resetForm()};
 $("clearBtn").onclick=resetForm;
 let endAuto=true;function onStartChange(){const a=$("tripDate").value,b=$("tripEnd").value;$("tripEnd").min=a||"";if(a&&(endAuto||!b||b<a)){$("tripEnd").value=addDays(a,1);endAuto=true}updateNights()}
 ["input","change","blur"].forEach(ev=>$("tripDate").addEventListener(ev,onStartChange));["input","change"].forEach(ev=>$("tripEnd").addEventListener(ev,()=>{endAuto=false;updateNights()}));
@@ -342,7 +342,12 @@ $("gKeyClear").onclick=async()=>{if(cloud.on&&cloud.sharedKey&&!confirm("ふた�
 
 /* ===== Firebase 同期 ===== */
 const cloud={sharedKey:"",on:false,user:null,A:null,F:null,auth:null,db:null,root:null,col:null,unsub:[],cloudIds:new Set(),denied:false,state:""};
-function myName(){const u=cloud.user;if(!u)return "";return (u.displayName||u.email||"").split(/[\s@]/)[0]}
+const PEOPLE={"mika.kuritani@gmail.com":"Mika","araitakanori@gmail.com":"Takanori"}; // 記録者の表示名
+function nameOf(email){return PEOPLE[String(email||"").toLowerCase()]||""}
+function oldName(){const u=cloud.user;return u?(u.displayName||u.email||"").split(/[\s@]/)[0]:""}
+function myEmail(){return String(cloud.user?.email||"").toLowerCase()}
+function myName(){return cloud.user?(nameOf(myEmail())||oldName()):""}
+function creatorName(t){return nameOf(t.createdByEmail)||t.createdBy||""}
 function clean(o){return JSON.parse(JSON.stringify(o))}
 function fbErrText(e){const c=e?.code||"";
  if(c.includes("permission-denied"))return "このGoogleアカウントには許可がありません（Firestoreのルールにメールアドレスを追加してください）";
@@ -359,7 +364,7 @@ function renderSyncBox(){const n=$("notice");n.innerHTML="";n.className="notice"
  if(cloud.state==="error"){n.classList.add("warn");msg.textContent="同期の準備に失敗しました。通信状態を確認して、再読み込みしてください。";return}
  if(!cloud.user){msg.textContent="ふたりで記録を共有するには、Googleアカウントでログインしてください。（ログインしなくても、この端末には保存できます）";btn("Googleでログイン",cloudLogin,"primary");return}
  if(cloud.denied){n.classList.add("warn");msg.textContent="「"+(cloud.user.email||"")+"」は同期が許可されていません。許可したアカウントでログインし直してください。";btn("ログアウト",cloudLogout);return}
- n.classList.add("sync");msg.textContent=cloud.on?"☁ 同期中（"+(cloud.user.email||myName())+"）：ふたりの記録が自動で共有されます。":"☁ 同期を開始しています…";btn("ログアウト",cloudLogout)}
+ n.classList.add("sync");msg.textContent=cloud.on?"☁ 同期中（"+(myName()||cloud.user.email)+"）：ふたりの記録が自動で共有されます。":"☁ 同期を開始しています…";btn("ログアウト",cloudLogout)}
 async function initCloud(){if(!FIREBASE_CONFIG){renderSyncBox();return}
  cloud.state="loading";renderSyncBox();
  try{const base="https://www.gstatic.com/firebasejs/"+FB_VER+"/";
@@ -373,7 +378,7 @@ async function initCloud(){if(!FIREBASE_CONFIG){renderSyncBox();return}
 async function cloudLogin(){const A=cloud.A;const prov=new A.GoogleAuthProvider();prov.setCustomParameters({prompt:"select_account"});
  try{await A.signInWithPopup(cloud.auth,prov)}catch(e){if((e.code||"").includes("popup-blocked")){try{await A.signInWithRedirect(cloud.auth,prov);return}catch(e2){e=e2}}console.error(e);status("ログインできませんでした："+fbErrText(e),"err")}}
 async function cloudLogout(){try{await cloud.A.signOut(cloud.auth)}catch(e){}status("ログアウトしました。この端末には記録が残っています。","ok")}
-function stopSync(){cloud.unsub.forEach(f=>{try{f()}catch{}});cloud.unsub=[];cloud.on=false}
+function stopSync(){cloud.unsub.forEach(f=>{try{f()}catch{}});cloud.unsub=[];cloud.on=false;cloud.namesFixed=false}
 function startSync(){stopSync();const F=cloud.F;cloud.root=F.doc(cloud.db,"tabilog","shared");cloud.col=F.collection(cloud.root,"trips");
  const mergedKey="tabilog-merged-"+cloud.user.uid;const localAtStart=[...trips];let merged=false;try{merged=!!localStorage.getItem(mergedKey)}catch{}
  cloud.unsub.push(F.onSnapshot(cloud.col,{includeMetadataChanges:false},snap=>{
@@ -383,7 +388,8 @@ function startSync(){stopSync();const F=cloud.F;cloud.root=F.doc(cloud.db,"tabil
   if(!merged){merged=true;try{localStorage.setItem(mergedKey,"1")}catch{}
    const localOnly=localAtStart.filter(t=>!cloud.cloudIds.has(t.id));
    if(localOnly.length){cloudApply({set:localOnly}).then(()=>status("この端末の記録"+localOnly.length+"件をクラウドに追加しました。","ok")).catch(e=>status("クラウドへの追加に失敗しました："+fbErrText(e),"err"));fromCloud.push(...localOnly)}}
-  trips=fromCloud;cloud.on=true;cloud.denied=false;persistLocal();refreshAll();drawMap();renderSyncBox();
+  trips=fromCloud;cloud.on=true;
+  if(!cloud.namesFixed){cloud.namesFixed=true;const me=myEmail(),old=oldName(),nm=nameOf(me);const mine=fromCloud.filter(t=>!t.createdByEmail&&t.createdBy&&(t.createdBy===old||t.createdBy===nm));if(mine.length&&nm){mine.forEach(t=>{t.createdByEmail=me;t.createdBy=nm});cloudApply({set:mine}).catch(()=>{})}}cloud.denied=false;persistLocal();refreshAll();drawMap();renderSyncBox();
  },err=>{console.error(err);if((err.code||"").includes("permission-denied")){cloud.denied=true;cloud.on=false;renderSyncBox()}else status("同期でエラーが発生しました："+fbErrText(err),"err")}));
  cloud.unsub.push(F.onSnapshot(cloud.root,d=>{const data=d.data()||{};const tl=data.tagList;if(Array.isArray(tl)){const sel=selectedTags();tagList=mergeTags([...tagList,...tl]);renderTags(sel);persistLocal()}
   if(d.metadata?.fromCache)return;
@@ -394,7 +400,7 @@ function startSync(){stopSync();const F=cloud.F;cloud.root=F.doc(cloud.db,"tabil
 }
 async function saveSharedKey(v){const F=cloud.F;await F.setDoc(cloud.root,{mapsKey:v},{merge:true});cloud.sharedKey=v}
 async function cloudApply(ch={}){if(!cloud.on&&!cloud.user)return;const F=cloud.F,who=myName();const ops=[];
- const put=t=>ops.push(b=>b.set(F.doc(cloud.col,t.id),{...clean({...t,updatedAt:null}),createdBy:t.createdBy||who,updatedBy:who,updatedAt:F.serverTimestamp()}));
+ const me=myEmail();const put=t=>{const ce=t.createdByEmail||(t.createdBy?"":me);ops.push(b=>b.set(F.doc(cloud.col,t.id),{...clean({...t,updatedAt:null}),createdBy:nameOf(ce)||t.createdBy||who,createdByEmail:ce,updatedBy:who,updatedByEmail:me,updatedAt:F.serverTimestamp()}))};
  (ch.set||[]).forEach(put);(ch.del||[]).forEach(id=>ops.push(b=>b.delete(F.doc(cloud.col,id))));
  if(ch.replaceAll){const keep=new Set(trips.map(t=>t.id));cloud.cloudIds.forEach(id=>{if(!keep.has(id))ops.push(b=>b.delete(F.doc(cloud.col,id)))});trips.forEach(put)}
  ops.push(b=>b.set(cloud.root,{tagList,updatedAt:F.serverTimestamp()},{merge:true}));
